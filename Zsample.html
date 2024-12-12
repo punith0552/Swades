@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bar Graph and Table</title>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        /* Styling for the container */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        #output {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        canvas {
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 60%;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="output">
+        <canvas id="chart"></canvas>
+        <table id="table"></table>
+    </div>
+    <button id="generate-btn">Generate</button>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const chartCanvas = document.getElementById("chart");
+            const table = document.getElementById("table");
+            const generateButton = document.getElementById("generate-btn");
+
+            let chart;
+
+            // Sample data for the table and graph
+            const tableData = [
+                { division: "North", city: "City A", value: 120 },
+                { division: "South", city: "City B", value: 150 },
+                { division: "East", city: "City C", value: 180 },
+                { division: "West", city: "City D", value: 200 },
+                { division: "Central", city: "City E", value: 100 }
+            ];
+
+            // Function to generate table
+            function generateTable(data) {
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th>Division</th>
+                            <th>City</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${data.map(row => `
+                            <tr>
+                                <td>${row.division}</td>
+                                <td>${row.city}</td>
+                                <td>${row.value}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                `;
+            }
+
+            // Function to generate bar chart
+            function generateChart(data) {
+                const labels = data.map(row => row.city);
+                const values = data.map(row => row.value);
+                const colors = data.map(() => `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.7)`);
+
+                if (chart) {
+                    chart.destroy(); // Destroy the existing chart before creating a new one
+                }
+
+                chart = new Chart(chartCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: "Value",
+                            data: values,
+                            backgroundColor: colors,
+                            borderColor: colors.map(color => color.replace("0.7", "1")),
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top'
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Event listener for button click
+            generateButton.addEventListener("click", () => {
+                generateTable(tableData); // Generate the table
+                generateChart(tableData); // Generate the chart
+            });
+        });
+    </script>
+</body>
+</html>
